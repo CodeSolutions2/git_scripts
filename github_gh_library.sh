@@ -264,6 +264,8 @@ clone_a_personal_repo_directory(){
 push_pull_changes_from_PC_to_repo(){
 
 	export cur_path=$(pwd)
+	echo "cur_path:"
+	echo $cur_path
 	
 	# ---------------------------------------------
 	# ***** CHANGE ONLY *****
