@@ -5,7 +5,8 @@
 # RUN IT
 # -------
 # cd /home/oem2/Documents/PROGRAMMING/Github_analysis_PROJECTS/Git_scripts
-# ./gh_API_commands.sh
+# source ./gh_API_commands.sh
+# call the functions
 
 
 # ---------------------------------------------
@@ -59,44 +60,53 @@ fi
 
 
 
-# ---------------------------------------------
-# Create a new remote repository and clone it locally
-# ---------------------------------------------
-export val=$(echo "X0")
+create_git_repo(){
 
-if [[ $val == "X0" ]]
-then
 
+    # Creates a new remote repository and clones it locally
+    
     # export NOMDEREPO=$(echo "mod_docx")
-    export NOMDEREPO=$(echo "Git_scripts")
+    # export NOMDEREPO=$(echo "Git_scripts")
+    export NOMDEREPO=$(echo "Case_Studies")
+
+    # Go to the folder path where one chooses to make changes to a git repository : the folder path where the files are located
+    export folder_path=$(echo "/home/oem2/Documents/PROGRAMMING/Github_analysis_PROJECTS/$NOMDEREPO")
+    cd $folder_path
     
     
-    # Create a new remote repository and clone it locally
+    # Create a new remote repository and clone it locally: this command creates a folder called $NOMDEREPO in the same directory and make the git repo
     gh repo create $NOMDEREPO --public --clone
 
-    # gh repo list
-    
-    # Create a README
+    # Create a README in the same directory
     sudo echo $NOMDEREPO >> README.md
     # OU
     # sudo touch README.md
     # OU
     # sudo echo $NOM_DE_REPO | cat >> README.md
+	
+    # Move all the files into the $NOMDEREPO folder
 
-fi
+}
+
+
+# ---------------------------------------------
+
+
+list_git_repo(){
+
+    # List the git repositories
+    gh repo list
+
+}
+
 
 # ---------------------------------------------
 
 
+create_a_release(){
 
+    # Create a new release/tag for published code
 
-# ---------------------------------------------
-# Create a new release/tag for published code
-# ---------------------------------------------
-export val=$(echo "X1")
-
-if [[ $val == "X0" ]]
-then
     # Organization account
     export username=$(echo "DevopsPractice7")
 
@@ -104,7 +114,8 @@ then
 
     # Create the first release
     gh release create --repo $username/$NOMDEREPO --title "Version 10" --notes "Correction of errors: incorrect indentation line 242." 0.1.0
+    
+}
 
-fi
 
 # ---------------------------------------------

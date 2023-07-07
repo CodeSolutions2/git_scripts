@@ -1,5 +1,7 @@
 #!/bin/bash
 
+# cd /home/oem2/Documents/PROGRAMMING/Github_analysis_PROJECTS/Git_scripts
+
 # ./PUSH_PULL_changes_from_PC_to_repo.sh
 
 
@@ -108,6 +110,7 @@ configure_settings_file(){
 
 
 
+
 # ---------------------------------------------
 # ***** CHANGE ONLY *****
 # ---------------------------------------------
@@ -134,8 +137,8 @@ export connection_method=$(echo "SSH")  # SSH or HTTPS
 # Define the names to execute the steps below :
 # Folder path where one chooses to make changes to a git repository  
 # export folder_path=$(echo "/home/oem2/Documents/PROGRAMMING/Github_analysis_PROJECTS/PYPI/Automatic_CV")
-export folder_path=$(echo "/home/oem2/Documents/ONLINE_CLASSES/Spécialisation_Google_Data_Analytics/3_Google_Data_Analytics_Capstone_Complete_a_Case_Study")
-export folder_path=$(echo "/home/oem2/Documents/PROGRAMMING/Github_analysis_PROJECTS/Git_scripts")
+export folder_path=$(echo "/home/oem2/Documents/PROGRAMMING/Github_analysis_PROJECTS/Case_Studies")
+# export folder_path=$(echo "/home/oem2/Documents/PROGRAMMING/Github_analysis_PROJECTS/Git_scripts")
 
 
 # Name of folder where the repository is located
@@ -144,8 +147,9 @@ export folder_num=$(echo "2")
 
 # Name of the repository
 # export NOMDEREPO=$(echo "mod_docx")
-# export NOMDEREPO=$(echo "automatic_GCP_ingestion")
-export NOMDEREPO=$(echo "Git_scripts")
+# export NOMDEREPO=$(echo "GCP_ingestion_analysis_tools")
+# export NOMDEREPO=$(echo "Git_scripts")
+export NOMDEREPO=$(echo "Case_Studies")
 
 # Name of the branch to use to make changes to the repository
 export branch_name=$(echo "main")

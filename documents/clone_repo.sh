@@ -91,20 +91,10 @@ configure_settings_file_NONpersonalREPO(){
 # ---------------------------------------------
 
 
+clone_a_personal_repo_directory(){
 
 
-
-
-
-
-# ---------------------------------------------
-
-
-# Clone a personal repo directory
-export val=$(echo "X1")
-
-if [[ $val == "X0" ]]
-then
+    # Clone a personal repo directory
     # ---------------------------------------------
     # ***** CHANGE ONLY *****
     # ---------------------------------------------
@@ -155,17 +145,16 @@ then
     cd $folder_path_outside_git_dir
     git clone $URL
 
-fi
+}
 
 
 # ---------------------------------------------
 
 
-# Clone a non-personal repo directory
-export val=$(echo "X0")
+clone_a_personal_repo_directory(){
 
-if [[ $val == "X0" ]]
-then
+
+    # Clone a non-personal repo directory
     # ---------------------------------------------
     # ***** CHANGE ONLY *****
     # ---------------------------------------------
@@ -196,7 +185,7 @@ then
     cd $folder_path
     git clone $HTTPS_URL
 
-fi
+}
 
 
 # ---------------------------------------------
