@@ -196,8 +196,7 @@ clone_a_personal_repo_directory(){
     export folder_path=$(echo "/home/oem2/Documents/ONLINE_CLASSES/Spécialisation_Google_Data_Analytics/3_Google_Data_Analytics_Capstone_Complete_a_Case_Study")
 
     # Name of folder where the repository is located
-    export folder_name=$(echo "git")
-    export folder_num=$(echo "2")
+    export folder_name=$(echo "git2")
 
     # Name of the repository
     # export NOMDEREPO=$(echo "mod_docx")
@@ -208,7 +207,7 @@ clone_a_personal_repo_directory(){
     
     
 
-    export folder_path_outside_git_dir=$(echo "$folder_path/$folder_name$folder_num")
+    export folder_path_outside_git_dir=$(echo "$folder_path/$folder_name")
     export git_dir_folder_path=$(echo "$folder_path_outside_git_dir/$NOMDEREPO")
 
     # Clone a directory that does not belong to you
@@ -264,6 +263,8 @@ clone_a_personal_repo_directory(){
 
 push_pull_changes_from_PC_to_repo(){
 
+	export cur_path=$(pwd)
+	
 	# ---------------------------------------------
 	# ***** CHANGE ONLY *****
 	# ---------------------------------------------
@@ -301,8 +302,7 @@ push_pull_changes_from_PC_to_repo(){
 
 		
 	# Name of folder where the repository is located
-	export folder_name=$(echo "git")
-	export folder_num=$(echo "2")
+	export folder_name=$(echo "git2")
 
 	# Name of the branch to use to make changes to the repository
 	export branch_name=$(echo "main")
@@ -315,7 +315,7 @@ push_pull_changes_from_PC_to_repo(){
 	# Define existing PATHS
 	# ---------------------------------------------
 	# Step 1: Set repo and path variables
-	export folder_path_outside_git_dir=$(echo "$folder_path/$folder_name$folder_num")
+	export folder_path_outside_git_dir=$(echo "$folder_path/$folder_name")
 	export git_dir_folder_path=$(echo "$folder_path_outside_git_dir/$NOMDEREPO")
 	# ---------------------------------------------
 
@@ -340,8 +340,8 @@ push_pull_changes_from_PC_to_repo(){
 	# to do the git pull  
 
 	# [Step 0] Create a new folder to do git pull from the old repo files
-	export folder_num_TEMP=$(echo $(($folder_num + 1)))
-	export folder_path_outside_git_dir_TEMP=$(echo "$folder_path/$folder_name$folder_num_TEMP")
+	export folder_TEMP=$(echo "_delete") # put git pull files in a git_delete folder
+	export folder_path_outside_git_dir_TEMP=$(echo "$folder_path/$folder_name$folder_TEMP")
 	export git_dir_folder_path_TEMP=$(echo "$folder_path_outside_git_dir_TEMP/$NOMDEREPO")
 	# ---------------------------------------------
 
@@ -395,6 +395,9 @@ push_pull_changes_from_PC_to_repo(){
 	# ---------------------------------------------
 	mv $folder_path_outside_git_dir_TEMP $folder_path_outside_git_dir
 	# ---------------------------------------------
+	
+	# Return to the orginal path, instead of staying in the push path
+	cd $cur_path
 
 }
 
