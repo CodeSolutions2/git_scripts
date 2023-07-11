@@ -26,6 +26,9 @@ configure_settings_file_personalREPO(){
     # $4 = git_dir_folder_path
     # $5 = connection_method
     
+    echo "connection_method :"
+    echo $5
+    
     if [[ $5 = "HTTPS" ]]; then
     	# HTTPS
     	export URL=$(echo "https://github.com/$1/$2.git")   # *** worked for git clone, did not work for git push ***
@@ -193,14 +196,17 @@ clone_a_personal_repo_directory(){
     # Define the names to execute the steps below :
     # Folder path where one chooses to make changes to a git repository  
     # export folder_path=$(echo "/home/oem2/Documents/PROGRAMMING/Github_analysis_PROJECTS/PYPI/Automatic_CV")
-    export folder_path=$(echo "/home/oem2/Documents/ONLINE_CLASSES/Spécialisation_Google_Data_Analytics/3_Google_Data_Analytics_Capstone_Complete_a_Case_Study")
-
+    # export folder_path=$(echo "/home/oem2/Documents/ONLINE_CLASSES/Spécialisation_Google_Data_Analytics/3_Google_Data_Analytics_Capstone_Complete_a_Case_Study")
+    export folder_path=$(echo "/home/oem2/Documents/PROGRAMMING")
+	
+	
     # Name of folder where the repository is located
     export folder_name=$(echo "git2")
 
     # Name of the repository
     # export NOMDEREPO=$(echo "mod_docx")
-    export NOMDEREPO=$(echo "automatic_GCP_ingestion")
+    # export NOMDEREPO=$(echo "automatic_GCP_ingestion")
+    export NOMDEREPO=$(echo "Notes")
     # ---------------------------------------------
     # ***** CHANGE ONLY *****
     # ---------------------------------------------
@@ -223,7 +229,7 @@ clone_a_personal_repo_directory(){
 # ---------------------------------------------
 
 
-clone_a_personal_repo_directory(){
+clone_a_NON_personal_repo_directory(){
 
 
     # Clone a non-personal repo directory
@@ -290,18 +296,23 @@ push_pull_changes_from_PC_to_repo(){
 	# 2. make changes on the PC,
 	# 3. run this script to save changes to Github
 	
+	# ---------------------------------------------
 	# Name of the repository
+	# ---------------------------------------------
 	# export NOMDEREPO=$(echo "mod_docx")
 	# export NOMDEREPO=$(echo "GCP_ingestion_analysis_tools")
-	export NOMDEREPO=$(echo "Git_scripts")
+	# export NOMDEREPO=$(echo "Git_scripts")
 	# export NOMDEREPO=$(echo "Case_Studies")
+	# export NOMDEREPO=$(echo "Case_Study_Book")
 	
 	# Define the names to execute the steps below :
 	# Folder path where one chooses to make changes to a git repository  
 	# export folder_path=$(echo "/home/oem2/Documents/PROGRAMMING/Github_analysis_PROJECTS/PYPI/Automatic_CV")
-	# export folder_path=$(echo "/home/oem2/Documents/PROGRAMMING/Github_analysis_PROJECTS/Case_Studies")
-	export folder_path=$(echo "/home/oem2/Documents/PROGRAMMING/Github_analysis_PROJECTS/Git_scripts")
-
+	# export folder_path=$(echo "/home/oem2/Documents/PROGRAMMING/Github_analysis_PROJECTS/$NOMDEREPO")
+	
+	export NOMDEREPO=$(echo "Notes")
+	export folder_path=$(echo "/home/oem2/Documents/PROGRAMMING/$NOMDEREPO")
+	# ---------------------------------------------
 		
 	# Name of folder where the repository is located
 	export folder_name=$(echo "git2")
@@ -463,7 +474,8 @@ create_git_repo_gh(){
     
     # export NOMDEREPO=$(echo "mod_docx")
     # export NOMDEREPO=$(echo "Git_scripts")
-    export NOMDEREPO=$(echo "Case_Studies")
+    # export NOMDEREPO=$(echo "Case_Studies")
+    export NOMDEREPO=$(echo "Case_Study_Book")
 
     # Go to the folder path where one chooses to make changes to a git repository : the folder path where the files are located
     export folder_path=$(echo "/home/oem2/Documents/PROGRAMMING/Github_analysis_PROJECTS/$NOMDEREPO")
@@ -515,3 +527,13 @@ create_a_release_gh(){
 
 
 # ---------------------------------------------
+
+
+# https://learn.microsoft.com/en-us/azure/devops/pipelines/ecosystems/github-actions?view=azure-devops
+# https://learn.microsoft.com/fr-fr/azure/devops/pipelines/get-started/pipelines-get-started?view=azure-devops
+# https://learn.microsoft.com/fr-fr/azure/devops/cli/policy-configuration-file?view=azure-devops
+# https://learn.microsoft.com/fr-fr/cli/azure/devops/service-endpoint/github?view=azure-cli-latest
+# https://learn.microsoft.com/en-us/azure/devops/cli/service-endpoint?view=azure-devops
+
+
+
