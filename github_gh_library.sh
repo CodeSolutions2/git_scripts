@@ -1,18 +1,66 @@
 #!/bin/bash
 
-
 # -------
 # RUN IT
 # -------
-# cd /home/oem2/Documents/PROGRAMMING/Github_analysis_PROJECTS/Git_scripts/git2/Git_scripts
-# source ./github_gh_library.sh
-# call the functions 
+# [0] on Bash
+# cd /to/path/you/want/gitN/to/be/created
+# git clone https://github.com/CodeSolutions2/temp_repo
+# source /to/path/you/want/gitN/to/be/created/temp_repo/github_gh_library_short.sh
+# RUN_IT_BEFORE_CHANGES
+# [7] Manually make the changes in the repo folder in git2 - *** CHANGE the files that need to be changed ***
+# RUN_IT_AFTER_CHANGES
 
+# ---------------------------------------------
+
+# https://docs.github.com/en/get-started/getting-started-with-git/managing-remote-repositories
 
 # ---------------------------------------------
 # Github command line tools
 # ---------------------------------------------
 
+# ---------------------------------------------
+# USER_INPUTS
+# ---------------------------------------------
+# [0] Define RepoName
+export RepoName=$(echo "RepoName")
+
+# [1] Select the [folder path] where one chooses to put the folder "git2" (git2 is a main folder that is created to contain the downloaded repo)
+export folder_path=$(echo "/home/username/Documents")
+
+# [2] RepoOwnerName
+export username=$(echo "RepoOwnerName")
+
+# [3] User email
+export useremail=$(echo "RepoOwnerName@gmail.com")
+
+# [4] Connection method
+# export connection_method=$(echo "SSH")
+export connection_method=$(echo "HTTPS")
+
+# [5] folder_name (it is the name of the folder containing the repository, called "git2")
+export folder_name=$(echo "git2")  # Folder name to put the repo files in
+
+# [6] Branch name to use to make changes to the repository
+export branch_name=$(echo "main")   # the name can be anything but 'master'
+ 
+# ---------------------------------------------
+
+RUN_IT_BEFORE_CHANGES(){
+
+  # [6] Clone the repo to folder_path : it will automatically create git2 and then the repo folder inside
+  create_main_gitN_folder_AND_clone_repository
+
+  # [7] Manually make the changes in the repo folder in git2 - *** CHANGE the files that need to be changed ***
+
+}
+
+RUN_IT_AFTER_CHANGES(){
+
+  # [6] Update GitHub with your changes: pull the repo from GitHub, move your updated files to the pulled folder, then push all changes back to GitHub
+  push_pull_changes_from_PC_to_a_repo_branch
+
+}
 
 # ---------------------------------------------
 # Dependant functions that DO NOT CHANGE
@@ -20,14 +68,27 @@
 configure_settings_file(){
 
     # Inputs:
-    # $1 = username
-    # $2 = useremail
-    # $3 = URL
-    # $4 = git_dir_folder_path
+    # $1 = URL
+    # $2 = git_dir_folder_path
+
+    # -------------------
+
+    # Reset existing configurations: Remove the git.recentrepo
+    git config --global --unset-all gui.recentrepo
     
-    git config --global user.name $1
-    git config --global user.email $2
-    git config --global remote.origin.url $3    # changes remote.origin.url in /home/oem2/.gitconfig
+    # -------------------
+    
+    echo "Set user name: $username"
+    git config --global user.name $username
+
+    echo "Set user email: $useremail"
+    git config --global user.email $useremail
+
+    # Changes remote.origin.url in /home/oem2/.gitconfig
+    echo "Set repository url: $1"
+    git config --global remote.origin.url $1
+    
+    # -------------------
     
     # To change remote.origin.url in .git/config
     # gedit .git/config
@@ -36,30 +97,44 @@ configure_settings_file(){
     # -------------------
     
     # Define a safe directory on the PC
-    git config --global --add safe.directory $4
+    echo "Set the safe directory to: $2"
+    git config --global --add safe.directory $2
     
     # -------------------
+
+    # Specify how to handle some file changes that may trigger errors.
+    # If one removes data from a file it may give an error, saying 
+    # "You have divergent branches and need to specify how to reconcile them". 
+    # Thus, one needs to tell Git to accept the changes either by: 
+    # [0] combining the current and previous file contents into the new file (merge), 
+    # [1] accepting the file that was changed last by chronological order (rebase), 
+    # [2] selecting a combination of the latest changes on the main branch and the 
+    # latest changes on your branch (fast-forward).
+
+    # Rebase is selected as a strategy to handle conflict error
+    # git config --global pull.rebase false # merge (the default strategy)
+    git config --global pull.rebase true  # rebase
+    # git config --global pull.ff only 
+
+    # -------------------
     
-    # View configuration file
-    # git config --list --show-origin
+    echo "View final Git configuration:"
+    git config --list --show-origin
     
     # -------------------
     
 }
 
-
 # ---------------------------------------------
-
 
 pull_from_a_branch_repo(){
 
     # Inputs:
-    # $1 = folder_path_outside_git_dir # /home/oem2/Documents/PROGRAMMING/Github_analysis_PROJECTS/PYPI/Automatic_CV/git3
-    # $2 = git_dir_folder_path # /home/oem2/Documents/PROGRAMMING/Github_analysis_PROJECTS/PYPI/Automatic_CV/git3/mod_docx
-    # $3 = branch_name
+    # $1 = folder_path_outside_git_dir (example: /../gitN)
+    # $2 = git_dir_folder_path (example: /../gitN/RepoName)
     
     # ------------------- 
-    # Push from an assigned initial branch : these steps are performed once before modifying files
+    # PULL from an assigned initial branch : these steps are performed once before modifying files
     # ------------------- 
     # Should be outside the git directory when initializing a local directory
     mkdir $1
@@ -68,31 +143,90 @@ pull_from_a_branch_repo(){
     mkdir $2
     
     # --------------------- This is correct now... ---------------------
+    
     # Should be in the git directory when pulling files
     cd $2
     
-    # Initialize the local directory and set the initial branch name to main
-    git init -b $3
+    echo "pull_from_a_branch_repo: Initialize the local directory"
+    git init
+
+    # ---------------------
+    # Specify additional settings:
+    # [A] Add a remote repository (Really this is OPTIONAL because the global remote repository is set in configure_settings_file)
+    # [B] Ensure one is on the CORRECT branch_name
+    # ---------------------
+    # [A] Add a remote repository: tell Git that this folder is connected to the repository on GitHub
+    echo "Add a remote repository"
+    git remote add origin $URL
+   
+    echo "View the remote repositories (-v=verbose)"
+    git remote -v
+    # origin https://github.com/CodeSolutions2/github_actions_practice.git (fetch)
+    # origin https://github.com/CodeSolutions2/github_actions_practice.git (push)
+    # origin https://github.com/CodeSolutions2/github_actions_practice.git (push)
+
+    # --------------------- 
+
+    # UNDERSTANDING: Eventhough the main branch exists on GitHub, a branch named main does not exist for [git CLI/the local PC]. After one does a Pull request from the repository, [git CLI/the local PC] creates a branch named main for the PC to associate with the URL address.
+    
     # --------------------- 
     
-    # Pull Repository from github first, while synchronizing the branches
-    git pull origin $3 --allow-unrelated-histories
+    echo "pull_from_a_branch_repo: Pull Repository from github first, while synchronizing the branches"
+    git pull origin $branch_name --allow-unrelated-histories
+    
+    # remote: Enumerating objects: 139, done.
+    # remote: Counting objects: 100% (7/7), done.
+    # remote: Compressing objects: 100% (3/3), done.
+    # remote: Total 139 (delta 5), reused 4 (delta 4), pack-reused 132
+    # Receiving objects: 100% (139/139), 55.16 KiB | 1.90 MiB/s, done.
+    # Resolving deltas: 100% (57/57), done.
+    # From https://github.com/CodeSolutions2/github_actions_practice
+    # * branch            main       -> FETCH_HEAD
+    # * [new branch]      main       -> origin/main
+
+    # --------------------- 
+    
+    # A branch named variable called main is created for the [git CLI/the local PC] after the pull, eventhough it already exists on the GitHub repository.
+
+    # --------------------- 
+    
+    # The difference between clone and pull, is that clone just gives the files. 
+    # But, pull gives the files and DEFINES the branch information so that one can push back the new data using the branch information.
+    
+    # --------------------- 
+
+    # Now that the [git CLI/the local PC] has updated branch information, we can view the branches.
+    
+    # [B] Ensure that the CORRECT branch_name is selected
+    echo "View the branches AFTER the PULL"
+    git branch
+    
+    # * master
+
+    echo "Switch to the branch named $branch_name: AFTER the PULL"
+    git checkout $branch_name
+    
+    # Branch 'main' set up to track remote branch 'main' from 'origin'.
+    # Switched to a new branch 'main'
+    # Pushing changes back to repo
+    # [main f8dbcab] Updating repository
+    # 1 file changed, 1 insertion(+)
+    # create mode 100644 .github/workflows/main.yml
+
+    # --------------------- 
 
 }
 
-
 # ---------------------------------------------
-
 
 push_to_a_branch_repo(){
 
     # Inputs:
-    # $1 = git_dir_folder_path
-    # $2 = branch_name
+    # $1 = git_dir_folder_path (EXAMPLE: /../gitN/RepoName)
     
     
     # ------------------- 
-    # Push from an assigned initial branch : these steps repeat 
+    # PUSH from an assigned initial branch : these steps repeat 
     # -------------------
     # Should be in git directory when adding files to be updated
     cd $1
@@ -100,93 +234,56 @@ push_to_a_branch_repo(){
     # OR 
     # git filename
     
-    # Should be in git directory when commiting files
-    # cd $1
-    git commit -m "comment"
+    # Should be in git directory (git_dir_folder_path) when commiting files
+    git commit -m "Updating repository"
+
+    # --------------------- 
     
-    # Should be in git directory when pushing files to the main branch
-    # cd $1
-    git push origin $2
+    # Should be in git directory (git_dir_folder_path) when pushing files to the main branch
+    echo "push_to_a_branch_repo: git push origin $branch_name"
+    git push origin $branch_name
+    
+    # Username for 'https://github.com': ^C
+
     # ------------------- 
 
 }
 
-
 # ---------------------------------------------
 
+create_main_gitN_folder_AND_clone_repository(){
 
-
-
-
-
-# ---------------------------------------------
-# Functions to CALL with INPUTS
-# ---------------------------------------------
-
-# Example:
-# clone_a_private_repo_directory /home/oem2/Documents Azure_cogserv_email_extraction
-# clone_a_private_repo_directory /home/oem2/Documents ML_DL_modeling
-
-clone_a_private_repo_directory(){
-
-    # Inputs:
-    # $1 = folder_path	# Directory where to put the files: export folder_path=$(echo "/home/oem2/Documents/PROGRAMMING")
-    # $2 = NOMDEREPO	# Name of the repository: export NOMDEREPO=$(echo "Notes")
-    
-
-    # Clone a private repo directory - you need to sign-in with credentials if the repo is private
-    # ---------------------------------------------
-    # ***** CHANGE ONLY *****
-    # ---------------------------------------------
-    # Personal user account
-    export username=$(echo "j622amilah")
-    export useremail=$(echo "j622amilah@gmail.com")
-
-    # OR
-
-    # Organization account
-    # export username=$(echo "DevopsPractice7")
-    # export useremail=$(echo "j622amilah@gmail.com")
-    
-    # ---------------------------------------------
-    
-    export connection_method=$(echo "SSH")  # SSH or HTTPS
-    
-    # ---------------------------------------------
-    
-    if [[ $connection_method == "HTTPS" ]]; then
-    	# HTTPS
-    	export URL=$(echo "https://github.com/$username/$2.git")
-    else
-    	# SSH
-    	export URL=$(echo "git@github.com:$username/$2.git")
-    fi 
-    
-    echo $URL
-    
-    # ---------------------------------------------
-    # ***** CHANGE ONLY *****
-    # ---------------------------------------------
-    
     # Idea steps : 
     # 0. make a temporary folder named git2 somewhere on the PC (folder_path), 
     # 1. download files from Github to git2 (if the repository files are not already on the machine, clone the repository to this temporary folder), 
     # 2. make changes on the PC,
     # 3. run this script to save changes to Github
+
+    # ---------------------------------------------
+
+    if [[ $connection_method == "HTTPS" ]]; then
+     # HTTPS: https://github.com/OWNER/REPOSITORY.git
+     export URL=$(echo "https://github.com/$username/$RepoName.git")
+    else
+     # SSH
+     export URL=$(echo "git@github.com:$username/$RepoName.git")
+    fi 
     
-    export folder_name=$(echo "git2")  # Folder name to put the repo files in
+    echo $URL
+
+    # ---------------------------------------------
     
-    cd $1
+    cd $folder_path
     
-    if [[ ! -f $1/$folder_name ]];then 
-    	mkdir $folder_name
+    if [[ ! -f $folder_path/$folder_name ]];then 
+     mkdir $folder_name
     fi
 
-    export folder_path_outside_git_dir=$(echo "$1/$folder_name")
-    export git_dir_folder_path=$(echo "$folder_path_outside_git_dir/$2")
+    export folder_path_outside_git_dir=$(echo "$folder_path/$folder_name")
+    export git_dir_folder_path=$(echo "$folder_path_outside_git_dir/$RepoName")
     
     # Clone a directory that does not belong to you
-    configure_settings_file $username $useremail $URL $git_dir_folder_path
+    configure_settings_file $URL $git_dir_folder_path
     
     # Perform git clone
     cd $folder_path_outside_git_dir
@@ -195,494 +292,123 @@ clone_a_private_repo_directory(){
 
 }
 
-
 # ---------------------------------------------
-
-
-clone_a_public_repo_directory(){
-
-    # Clone a public repo directory
-    # ---------------------------------------------
-    # ***** CHANGE ONLY *****
-    # ---------------------------------------------
-    # Personal user account
-    export username=$(echo "j622amilah")
-    export useremail=$(echo "j622amilah@gmail.com")
-
-    # OR
-
-    # Organization account
-    # export username=$(echo "DevopsPractice7")
-    # export useremail=$(echo "j622amilah@gmail.com")
-    
-    # ---------------------------------------------
-
-    # export HTTPS_URL=$(echo "https://github.com/GoogleCloudPlatform/training-data-analyst")  # SSH or HTTPS
-    export HTTPS_URL=$(echo "https://github.com/Azure/login")
-    
-    # ---------------------------------------------
-    
-    # Directory where to put the files
-    export folder_path=$(echo "/home/oem2/Documents/Github_analysis_PROJECTS/Azure_ML_Studio")
-    # ---------------------------------------------
-    # ***** CHANGE ONLY *****
-    # ---------------------------------------------
-    
-    # Clone a directory that does not belong to you
-    configure_settings_file $username $useremail $HTTPS_URL $folder_path
-    
-    # Perform git clone
-    cd $folder_path
-    git clone $HTTPS_URL
-
-}
-
-
-# ---------------------------------------------
-
-
-# export NOMDEREPO=$(echo "mod_docx")
-# export NOMDEREPO=$(echo " Azure_cogserv_email_extraction")
-# export NOMDEREPO=$(echo "Git_scripts")
-# export NOMDEREPO=$(echo "Case_Studies")
-# export NOMDEREPO=$(echo "Case_Study_Book")
-# export NOMDEREPO=$(echo "Notes")
-# export NOMDEREPO=$(echo "ML_DL_modeling")
-
-# Folder path where one chooses to put the folder "git2"
-# export folder_path=$(echo "/home/oem2/Documents")
-
-# Example:
-# [0] clone the repo to folder_path : it will automatically create git2 and then the repo folder inside
-# clone_a_private_repo_directory $folder_path $NOMDEREPO
-#
-# [1] make changes in the repo folder in git2
-#
-# [2] run the function below to pull the repo from GitHub, move your updated files to the pulled folder, then push all changes back to GitHub
-# push_pull_changes_from_PC_to_a_repo_branch $folder_path $NOMDEREPO
-
 
 push_pull_changes_from_PC_to_a_repo_branch(){
 
-    # Inputs:
-    # $1 = folder_path	# Directory where to put the files: export folder_path=$(echo "/home/oem2/Documents/PROGRAMMING")
-    # $2 = NOMDEREPO	# Name of the repository: export NOMDEREPO=$(echo "Notes")
+ # Idea steps : 
+ # 0. make a temporary folder named git2 somewhere on the PC (folder_path), 
+ # 1. download files from Github to git2 (if the repository files are not already on the machine, clone the repository to this temporary folder), 
+ # 2. make changes on the PC,
+ # 3. run this script to save changes to Github
 
-	export cur_path=$(pwd)
-	echo "cur_path:"
-	echo $cur_path
-	
-	# ---------------------------------------------
-	# ***** CHANGE ONLY *****
-	# ---------------------------------------------
-	# Personal user account
-	export username=$(echo "j622amilah")
-	export useremail=$(echo "j622amilah@gmail.com")
+ # ---------------------------------------------
 
-	# OR
+ export cur_path=$(pwd)
+ echo "cur_path: $cur_path"
 
-	# Organization account
-	# export username=$(echo "DevopsPractice7")
-	# export useremail=$(echo "j622amilah@gmail.com")
+ # ---------------------------------------------
+ # Define existing PATHS
+ # ---------------------------------------------
+ # Step 1: Set repo and path variables
+ export folder_path_outside_git_dir=$(echo "$folder_path/$folder_name")
+ export git_dir_folder_path=$(echo "$folder_path_outside_git_dir/$RepoName")
+ # ---------------------------------------------
 
-	export connection_method=$(echo "SSH")  # SSH or HTTPS
+ # ---------------------------------------------
+ # Configure file Settings
+ # ---------------------------------------------
+ if [[ $connection_method == "HTTPS" ]]; then
+      # HTTPS
+      export URL=$(echo "https://github.com/$username/$RepoName.git")
+ else
+      # SSH
+      export URL=$(echo "git@github.com:$username/$RepoName.git")
+ fi
+ 
+ configure_settings_file $URL $git_dir_folder_path
 
-	# ------------------- 
+ # ---------------------------------------------
+ # Create temporary folder
+ # ---------------------------------------------
+ # Problem with git (Git copies over the changes that you made when you try to pull-push to the GitHub repo, and if you do push alone without pull Git gives an error.)
 
-	# Idea steps : 
-	# 0. make a temporary folder named git2 somewhere on the PC (folder_path), 
-	# 1. download files from Github to git2 (if the repository files are not already on the machine, clone the repository to this temporary folder), 
-	# 2. make changes on the PC,
-	# 3. run this script to save changes to Github
-	
-	# ---------------------------------------------
-		
-	# Name of folder where the repository is located
-	export folder_name=$(echo "git2")
+ # You have a folder on the PC that is identical to the folder that is on the repo
+ # path location in the folder /../gitN/RepoName
 
-	# Name of the branch to use to make changes to the repository
-	export branch_name=$(echo "main")   # the name can be anything but 'master'
-	# ---------------------------------------------
-	# ***** CHANGE ONLY *****
-	# ---------------------------------------------
+ # But, you modify the files on the PC. 
 
+ # Then you have to do a git pull all the time for the libraries on the repo and PC to sync up, so you have to create a new folder to do the git pull  
 
-	# ---------------------------------------------
-	# Define existing PATHS
-	# ---------------------------------------------
-	# Step 1: Set repo and path variables
-	export folder_path_outside_git_dir=$(echo "$1/$folder_name")
-	export git_dir_folder_path=$(echo "$folder_path_outside_git_dir/$2")
-	# ---------------------------------------------
+ # [Step 0] Create a new folder to do git pull from the old repo files
+ # New method
+ export folder_TEMP=$(echo "_pulled_folder")
+ 
+ export folder_path_outside_git_dir_TEMP=$(echo "$folder_path/$folder_name$folder_TEMP")
+ export git_dir_folder_path_TEMP=$(echo "$folder_path_outside_git_dir_TEMP/$RepoName")
+ # ---------------------------------------------
 
+ # ---------------------------------------------
+ # PULL from repo : one must pull to a new folder, or else it will copy over your files that you changed
+ # ---------------------------------------------
+ echo "Starting pull_from_a_branch_repo:"
+ pull_from_a_branch_repo $folder_path_outside_git_dir_TEMP $git_dir_folder_path_TEMP
+ # ---------------------------------------------
 
-	# ---------------------------------------------
-	# Configure file Settings
-	# ---------------------------------------------
-	if [[ $connection_method == "HTTPS" ]]; then
-	     # HTTPS
-	     export URL=$(echo "https://github.com/$username/$2.git")
-	else
-	     # SSH
-	     export URL=$(echo "git@github.com:$username/$2.git")
-	fi
-	
-	configure_settings_file $username $useremail $URL $git_dir_folder_path
+ # ---------------------------------------------
+ # Need to copy the changed files in git_dir_folder_path to the "Git synced folder" at git_dir_folder_path_TEMP
+ # ---------------------------------------------
+ # Pull files from GitHub, and copy my new changed files into the folder
+ # Leave the .git in the git2_pulled_folder because it gives the state of the files on the GitHub repo, we want to update this with the GitHub commands
+ 
+ # Delete all the file except .git
+ mv .git $folder_path_outside_git_dir_TEMP
 
+ cd $folder_path_outside_git_dir_TEMP
 
-	# ---------------------------------------------
-	# Create temporary folder
-	# ---------------------------------------------
-	# Problem with git (Git copies over the changes that you made when you try to pull-push to the GitHub repo, and if you do push alone without pull Git gives an error.)
+ rm -rf $git_dir_folder_path_TEMP
 
-	# You have a folder on the PC that is identical to the folder that is on the repo
-	# /home/oem2/Documents/PROGRAMMING/Github_analysis_PROJECTS/PYPI/Automatic_CV/git2/mod_docx
+ mkdir $git_dir_folder_path_TEMP
 
-	# But, you modify the files on the PC. 
+ mv .git $git_dir_folder_path_TEMP
 
-	# Then you have to do a git pull all the time for the libraries on the repo and PC to sync up, so you have to create a new folder to do the git pull  
+ # Remove .git from old folder
+ cd $git_dir_folder_path
+ rm -rf .git
+ 
+ # Copy the new files from my PC to the temp folder
+ cp -a $git_dir_folder_path/. $git_dir_folder_path_TEMP
+ cd $git_dir_folder_path_TEMP
+ # ---------------------------------------------
 
-	# [Step 0] Create a new folder to do git pull from the old repo files
-	# New method
-	export folder_TEMP=$(echo "_pulled_folder")
-	
-	export folder_path_outside_git_dir_TEMP=$(echo "$1/$folder_name$folder_TEMP")
-	export git_dir_folder_path_TEMP=$(echo "$folder_path_outside_git_dir_TEMP/$2")
-	# ---------------------------------------------
+ # ---------------------------------------------
+ # PUSH to repo on the main branch
+ # ---------------------------------------------
+ echo 'Pushing changes back to repo'
+ push_to_a_branch_repo $git_dir_folder_path_TEMP
+ # ---------------------------------------------
 
+ # ---------------------------------------------
+ # Delete old folder : not doing mv because I want to be sure that all the files in the subfolders are deleted
+ # ---------------------------------------------
+ # Automatically delete the OLD folder
+ # rm -rf $folder_path_outside_git_dir
+ # 
+ # OR
+ #
+ # Rename the OLD folder as something to delete (automatic deleting can be dangerous)
+ mv $folder_path_outside_git_dir $folder_path/git2_OLD_to_delete
+ # ---------------------------------------------
 
-	# ---------------------------------------------
-	# PULL from repo : one must pull to a new folder, or else it will copy over your files that you changed
-	# ---------------------------------------------
-	echo 'Pulling repo from GitHub'
-	pull_from_a_branch_repo $folder_path_outside_git_dir_TEMP $git_dir_folder_path_TEMP $branch_name
-	# ---------------------------------------------
-
-
-	# ---------------------------------------------
-	# Need to copy the changed files in git_dir_folder_path to the "Git synced folder" at git_dir_folder_path_TEMP
-	# ---------------------------------------------
-	# Pull files from GitHub, and copy my new changed files into the folder
-	# Leave the .git in the git2_pulled_folder because it gives the state of the files on the GitHub repo, we want to update this with the GitHub commands
-	
-	# Delete all the file except .git
-	mv .git $folder_path_outside_git_dir_TEMP
-
-	cd $folder_path_outside_git_dir_TEMP
-
-	rm -rf $git_dir_folder_path_TEMP
-
-	mkdir $git_dir_folder_path_TEMP
-
-	mv .git $git_dir_folder_path_TEMP
-
-	# Remove .git from old folder
-	cd $git_dir_folder_path
-	rm -rf .git
-	
-	# Copy the new files from my PC to the temp folder
-	cp -a $git_dir_folder_path/. $git_dir_folder_path_TEMP
-	cd $git_dir_folder_path_TEMP
-	# ---------------------------------------------
-
-
-	# ---------------------------------------------
-	# PUSH to repo on the main branch
-	# ---------------------------------------------
-	echo 'Pushing changes back to repo'
-	push_to_a_branch_repo $git_dir_folder_path_TEMP $branch_name
-	# ---------------------------------------------
-	
-
-	# ---------------------------------------------
-	# Delete old folder : not doing mv because I want to be sure that all the files in the subfolders are deleted
-	# ---------------------------------------------
-	# Automatically delete the OLD folder
-	# rm -rf $folder_path_outside_git_dir
-	# 
-	# OR
-	#
-	# Rename the OLD folder as something to delete (automatic deleting can be dangerous)
-	mv $folder_path_outside_git_dir $1/git2_OLD_to_delete
-	# ---------------------------------------------
-
-
-	# ---------------------------------------------
-	# Rename new folder as the old folder
-	# ---------------------------------------------
-	mv $folder_path_outside_git_dir_TEMP $folder_path_outside_git_dir
-	# ---------------------------------------------
-	
-	# Return to the orginal path, instead of staying in the push path
-	cd $cur_path
+ # ---------------------------------------------
+ # Rename new folder as the old folder
+ # ---------------------------------------------
+ mv $folder_path_outside_git_dir_TEMP $folder_path_outside_git_dir
+ # ---------------------------------------------
+ 
+ # Return to the orginal path, instead of staying in the push path
+ cd $cur_path
 
 }
 
-
 # ---------------------------------------------
-
-
-move_a_git_repo_to_another_repo(){
-	
-	# Be sure to already have created the main repo; put the main repo name here
-	export main_repo_name=$(echo "ML_DL_modeling")
-	
-	export folder_path=$(echo "/home/oem2/Documents/git2")
-	
-	# Make an array of repos names to consolidate to another main repo
-	declare -a repos2move=($main_repo_name 'Azure_cogserv_email_extraction' 'Databricks_usage' 'Q_learning_project' 'Motor_classification' 'Son_des_oiseaux2' 'LSTM' 'Classify_sentences' 'Chatbot' 'Automate_files' 'Hackerrank_test' 'Histogram_object_detection' 'EEG_DAD' 'n4sid_prediction' 'Heart_jewelry' 'DataFrame-parser' 'unsupervised_label_assignment' 'changepoint_analysis' 'Interpolation_methods' 'hand_gesture_CNN' 'Obtaining_the_frequency_of_a_signal' 'Cousera_cat_DL_classification' 'chess_moves' 'Resume_compare_python' 'Heart_classification');
-		
-	echo 'repos2move'
-	echo $repos2move	
-	
-	# Get the length of the array
-	export N=$(echo ${#repos2move[@]})
-	
-	echo 'N'
-	echo $N
-	
-	export step0=$(echo "X0")
-	export step1=$(echo "X0")
-	
-	
-	for r in $( seq 0 $N )
-	do
-		echo $r
-		echo ${repos2move[$r]}
-			
-		# ---------------------------------------------
-		
-		if [[ $step0 == "X0" ]]
-		then
-			# Clone the repos on the main repo
-			# Be sure to use git clone --recurse-submodules to remove the .git from the subrepo folder
-			# A .git file in a subdirectory will lock the folder, put an arrow on it 
-			clone_a_private_repo_directory $folder_path ${repos2move[$r]}
-			
-			if [[ ${repos2move[$r]} != $main_repo_name ]]
-			then 
-				mv ${repos2move[$r]} $main_repo_name
-			fi
-		fi
-		
-		# ---------------------------------------------
-		
-		if [[ $step1 == "X0" ]]
-		then
-			# Verify that the .git folder in each subrepo is deleted
-			export repo_path=$(echo $folder_path/$main_repo_name/${repos2move[$r]})
-			echo $repo_path
-			
-			cd $repo_path
-			
-			rm -rf .git
-		fi
-		
-		# ---------------------------------------------
-	done
-	
-	# Step 2
-	# Update the repo main branch of the main_repo_name with the modifications
-	push_pull_changes_from_PC_to_a_repo_branch $folder_path $main_repo_name
-	
-	# Step 3: Delete all the old subrepos from GitHub
-
-}
-
-
-# ---------------------------------------------
-
-merge_a_branch_with_the_master_branch(){
-
-	# The main branch is the branch name that I am working on, but if I work in a team the production/team branch is the master branch. If I need to share my work with my team members, I need to push my changes to the master branch so the work is put into production OR the GitHub actions workflow can update with the changes that I made.
-	
-	# Name of the branch to use to make changes to the repository
-	export branch_name=$(echo "main")
-
-	# ---------------------------------------------
-	# PUSH changes made on the main branch to the master branch 
-	# ---------------------------------------------
-	# Change to the branch named $branch_name
-	git checkout $branch_name
-
-	# Rename the branch named $branch_name to the branch master
-	git branch -m master
-
-	# pull down files from master branch
-	git pull --allow-unrelated-histories
-
-	# There will be conflict file errrors:
-	# Way 0: Rebase, but this is not automatic, you have to manually change conflicting files
-	# git config pull.rebase true   # it adds all the changes to one file (.github/workflows/main.yml) on the PC
-	# Open the file (.github/workflows/main.yml) and make changes you want
-	# git add .github/workflows/main.yml
-	# git rebase --continue
-
-	# git config pull.rebase false  # fusion (stratégie par défaut)
-	# OR
-	# OR
-	# git config pull.ff only
-
-	# Set origin/master to track your local branch master
-	# git push -u origin master
-	# ---------------------------------------------
-		
-	
-}
-
-
-# ---------------------------------------------
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-# ---------------------------------------------
-# gh : Github API command line tool
-# https://cli.github.com/manual
-# sudo zypper install gh
-# ---------------------------------------------
-
-
-login_to_gh(){
-
-    # Personal Access Token (PAT)
-    export PAT=$(echo "")
-
-    # export finegrainedPAT=$(echo "https://docs.github.com/fr/rest/overview/permissions-required-for-fine-grained-personal-access-tokens?apiVersion=2022-11-28 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")
-
-
-    # The GITHUB_TOKEN secret is a GitHub App installation access token. 
-    # https://cli.github.com/manual/gh_auth_login
-    # sudo echo "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" >> GH_TOKEN.txt
-    # gh auth login --with-token < GH_TOKEN.txt
-
-    # ---------------------------------------------
-
-    gh auth login --with-token $PAT | gh auth login --scopes "read:org"
-
-    # -----------------------OU----------------------
-
-    # gh auth login --with-token $PAT
-    # gh auth login --scopes "read:org"
-    # OU
-    # gh auth login --scopes "repo"
-
-}
-
-
-# ---------------------------------------------
-
-
-
-create_git_repo_gh(){
-
-
-    # Creates a new remote repository and clones it locally
-    
-    # export NOMDEREPO=$(echo "mod_docx")
-    # export NOMDEREPO=$(echo "Git_scripts")
-    # export NOMDEREPO=$(echo "Case_Studies")
-    export NOMDEREPO=$(echo "Case_Study_Book")
-
-    # Go to the folder path where one chooses to make changes to a git repository : the folder path where the files are located
-    export folder_path=$(echo "/home/oem2/Documents/PROGRAMMING/Github_analysis_PROJECTS/$NOMDEREPO")
-    cd $folder_path
-    
-    
-    # Create a new remote repository and clone it locally: this command creates a folder called $NOMDEREPO in the same directory and make the git repo
-    gh repo create $NOMDEREPO --public --clone
-
-    # Create a README in the same directory
-    sudo echo $NOMDEREPO >> README.md
-    # OU
-    # sudo touch README.md
-    # OU
-    # sudo echo $NOM_DE_REPO | cat >> README.md
-	
-    # Move all the files into the $NOMDEREPO folder
-
-}
-
-
-# ---------------------------------------------
-
-
-delete_git_repo_gh(){
-
-	# List of repos to delete
-	declare -a repos2move=('Azure_cogserv_email_extraction' 'Databricks_usage' 'Q_learning_project' 'Motor_classification' 'Son_des_oiseaux2' 'LSTM' 'Classify_sentences' 'Chatbot' 'Automate_files' 'Hackerrank_test' 'Histogram_object_detection' 'EEG_DAD' 'n4sid_prediction' 'Heart_jewelry' 'DataFrame-parser' 'unsupervised_label_assignment' 'changepoint_analysis' 'Interpolation_methods' 'hand_gesture_CNN' 'Obtaining_the_frequency_of_a_signal' 'chess_moves' 'Resume_compare_python' 'Heart_classification');
-		
-	echo 'repos2move'
-	echo $repos2move	
-	
-	# Get the length of the array
-	export N=$(echo ${#repos2move[@]})
-	
-	echo 'N'
-	echo $N
-	
-	for r in $( seq 0 $N )
-	do
-		echo $r
-		
-		gh repo delete ${repos2move[$r]}
-		
-	done
-
-}
-
-
-# ---------------------------------------------
-
-list_git_repo_gh(){
-
-    # List the git repositories
-    gh repo list
-
-}
-
-
-# ---------------------------------------------
-
-
-create_a_release_gh(){
-
-    # Create a new release/tag for published code
-
-    # Organization account
-    export username=$(echo "DevopsPractice7")
-
-    export NOMDEREPO=$(echo "mod_docx")
-
-    # Create the first release
-    gh release create --repo $username/$NOMDEREPO --title "Version 10" --notes "Correction of errors: incorrect indentation line 242." 0.1.0
-    
-}
-
-
-# ---------------------------------------------
-
-
-
-
-
-
-
-
