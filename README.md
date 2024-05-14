@@ -8,6 +8,6 @@ A compilation of Git commands to make using Git easy!
   
 
 ## Useful links
-- Gitlab documentation: https://docs.gitlab.com/en/
-- GitHub documentation: https://docs.github.com/en/
-- Practicing DatScy Blog post [Git commands that work!]: https://medium.com/@j622amilah/git-commands-that-work-0f260e93f05b
+- Gitlab documentation: [https://docs.gitlab.com/en/](https://docs.gitlab.com/)
+- GitHub documentation: [https://docs.github.com/en](https://docs.github.com/en)
+- Practicing DatScy Blog post [Git commands that work!]: [https://medium.com/@j622amilah/git-commands-that-work-0f260e93f05b](https://medium.com/@j622amilah/git-commands-that-work-0f260e93f05b)
