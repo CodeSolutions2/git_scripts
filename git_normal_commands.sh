@@ -1,4 +1,4 @@
-
+#!/bin/bash
 
 # [0] Define Repository Name
 export RepoName=$(echo "RepoName")
