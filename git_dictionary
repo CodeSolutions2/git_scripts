@@ -1,0 +1,32 @@
+git --help
+git --version
+
+git add filename.txt   # put changes in staging area for the next commit
+git add -p  # put changes in the staging area, allows a user to interactively review patches to add to the current commit, staged changes
+git add *   # Put files in the working tree that you changed, which are already in the staging area, into the staging area
+git add -A  # Put untracked and tracked files in the staging area
+git add .     # if you want to add everything in the local repository, that was specified in the config file (in short, add all the files)
+
+git bisect start   # Debugging tools: search for changes between two different commits to find a bug in the tree
+git bisect bad                 # Current version is bad
+git bisect bad SHA_ID_OR_tag
+git bisect good SHA_ID_OR_tag  # After using 'git bisect'. Keep repeating the process: compile the tree, test it. Depending on whether it is good or bad, run 'git bisect good' or 'git bisect bad' to request the next commit that needs testing.
+
+git branch   # see the branches
+git branch new-feature    # create a new branch it's called new-feature
+git branch -r       # see remote branches in the repo, you can't modify branches because it's read-only
+git branch -merged    # list branches that were merged into the current branch
+
+git checkout   # see branches
+git checkout file_name.ext  # remove real changes in file_name.ext up to the previous commit OR discard 'unstaged' changes in modified files
+git checkout branch_name   	# change the branch to the branch named branch_name
+git checkout -b new_branch_name   # create a new branch from the current branch, and change to the new branch called new_branch_name
+
+git clone URL       # git clone is used to clone a remote repository into a local workspace. It creates the .git file automatically, so you don't need to do 'git init' to initialize the directory
+git clone https://github.com/OwnerRepoName/RepoName.git
+
+git commit -m "commit message"  # commit files that have been added to the staging area
+git commit -a -m "message"  # commit files that have already been added to be followed, we do not need to do "git add"
+git commit --amend     # edit and add changes to the commit that were made more recently (add a message for the current file and the file committed just before)
+
+
