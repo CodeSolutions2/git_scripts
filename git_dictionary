@@ -29,4 +29,13 @@ git commit -m "commit message"  # commit files that have been added to the stagi
 git commit -a -m "message"  # commit files that have already been added to be followed, we do not need to do "git add"
 git commit --amend     # edit and add changes to the commit that were made more recently (add a message for the current file and the file committed just before)
 
+git config --list --show-origin     # see Git settings file on the PC
+git config -l      # list the current configuration
 
+git config --global remote.origin.url git@github.com:OwnerRepoName/RepoName.git # for SSH
+# OR
+git config --global remote.origin.url https://github.com/OwnerRepoName/RepoName.git # for HTTPS
+
+git config --global user.email "OwnerRepoEmail@gmail.com"
+git config --global user.name "OwnerRepoName"  # --global means we set different values for different repositories
+git config --global credential.helper cache  # use a credential helper that caches our credentials for a window of time
