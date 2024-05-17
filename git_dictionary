@@ -1,35 +1,53 @@
 git --help
+
 git --version
 
 git add filename.txt   # put changes in staging area for the next commit
+
 git add -p  # put changes in the staging area, allows a user to interactively review patches to add to the current commit, staged changes
+
 git add *   # Put files in the working tree that you changed, which are already in the staging area, into the staging area
+
 git add -A  # Put untracked and tracked files in the staging area
+
 git add .     # if you want to add everything in the local repository, that was specified in the config file (in short, add all the files)
 
 git bisect start   # Debugging tools: search for changes between two different commits to find a bug in the tree
+
 git bisect bad                 # Current version is bad
+
 git bisect bad SHA_ID_OR_tag
+
 git bisect good SHA_ID_OR_tag  # After using 'git bisect'. Keep repeating the process: compile the tree, test it. Depending on whether it is good or bad, run 'git bisect good' or 'git bisect bad' to request the next commit that needs testing.
 
 git branch   # see the branches
+
 git branch new-feature    # create a new branch it's called new-feature
+
 git branch -r       # see remote branches in the repo, you can't modify branches because it's read-only
+
 git branch -merged    # list branches that were merged into the current branch
 
 git checkout   # see branches
+
 git checkout file_name.ext  # remove real changes in file_name.ext up to the previous commit OR discard 'unstaged' changes in modified files
+
 git checkout branch_name   	# change the branch to the branch named branch_name
+
 git checkout -b new_branch_name   # create a new branch from the current branch, and change to the new branch called new_branch_name
 
 git clone URL       # git clone is used to clone a remote repository into a local workspace. It creates the .git file automatically, so you don't need to do 'git init' to initialize the directory
+
 git clone https://github.com/OwnerRepoName/RepoName.git
 
 git commit -m "commit message"  # commit files that have been added to the staging area
+
 git commit -a -m "message"  # commit files that have already been added to be followed, we do not need to do "git add"
+
 git commit --amend     # edit and add changes to the commit that were made more recently (add a message for the current file and the file committed just before)
 
 git config --list --show-origin     # see Git settings file on the PC
+
 git config -l      # list the current configuration
 
 git config --global remote.origin.url git@github.com:OwnerRepoName/RepoName.git # for SSH
@@ -37,7 +55,9 @@ git config --global remote.origin.url git@github.com:OwnerRepoName/RepoName.git 
 git config --global remote.origin.url https://github.com/OwnerRepoName/RepoName.git # for HTTPS
 
 git config --global user.email "OwnerRepoEmail@gmail.com"
+
 git config --global user.name "OwnerRepoName"  # --global means we set different values for different repositories
+
 git config --global credential.helper cache  # use a credential helper that caches our credentials for a window of time
 
 # If one removes data from a file it may give an error, saying "You have divergent branches and need to specify how to reconcile them". Thus, one needs to tell Git to accept the changes either by: 0) combining the current and previous file contents into the new file (merge), 1) accepting the file that was changed last by chronological order (rebase), [2] selecting a combination of the latest changes on the main branch and the latest changes on your branch (fast-forward).
@@ -48,10 +68,109 @@ git config --global pull.ff only
 # You can replace "git config" with "git config --global" to set a default preference for all repositories. You can also pass --rebase, --no-rebase, or --ff-only on the command line to override the configured default per invocation.
 
 git config --global --unset-all gui.recentrepo  # remove the git.recentrepo
+
 git config --global rerere.enabled true   # enable rerere functionality in configuration file
 
 git diff  # see the changes that were made in a repository, for all files
+
 git diff -u  # see the changes that were made in a repository, for all files
+
 git diff --staged  # look at the changes of all the files in the staging area
+
 git diff -cached file_name   # look at the changes for file_name in the staging area
+
 git diff file_name  # look at the changes between the current version of file_name and the last committed version of file_name
+
+git fetch   # To synchronize data, it's copying the commits made in the remote repository to the remote branches. We can see all commits that other people have made. The retrieved content is uploaded to the remote branches of our repository. It is therefore not automatically reflected in our local branches.
+
+get fetch --all
+
+git help command_name
+
+git init  # initialize the current directory as a Git repo. Creating the .git file means one can use Git commands when one is in the directory
+
+git log  			# List the commits that one made
+
+git log -p    # see the changes that were made in a repository, for all files
+
+git log --stat  # Shows statistics on changes in the commit (ie: which files were changed and which lines were added or deleted)
+
+git log --graph --oneline     # View a short history of commits for a repo, it shows one line per commit
+
+git log -p -2   # look at last two entries in the log
+
+git merge branch_name      # merge branch_name branch into master branch. Merge means that it merges data and histories together, it adds a node after the two branches to collect the information
+
+git merge --abort  # to cancel the merge (delete the previous merge), because the merge conflicts are too tricky, complicated, and numerous. This will stop the merge and reset the files in your working tree back to the previous commit before the merge ever happened. 
+
+git merge origin/master     # merge the origin/master branch (the remote repo) into our local master branch
+
+git merge --squash branch_name  # consolidate multiple commits into a single commit
+
+# Fast-forward: selecting a combination of the latest changes on the main branch and the latest changes on your branch, without creating a merge commit.
+git checkout main
+git pull
+git checkout my-feature
+git merge main --ff-only
+
+git mv file_nameSOURCE file_nameDESTINATION # rename a file (but, changes are only staged)
+
+git pull		# Fetch the newest updates from a remote repository
+
+git push -u origin master  # -u sets the upstream branch for the current branch, push the changes to the [branch named master that already exists on GitHub, but the PC knows as the name master] and to the [URL defined as origin in the configuration file OR set using "git remote add origin $URL"]  
+
+git push origin branch_name:master  # push a branch that we have changed on the local repo to the remote repo
+
+git push 		# push commits from your local repo to a remote repo
+
+git push -f    # push changes by force from the local repo to the remote repo, copy to files
+
+git push --set-upstream origin main  # push the current branch and set the remote as upstream
+
+git rebase branch_name  # arrange commits chronologically
+
+git rebase -i HEAD~3   # interactive rebase screen from behind 3 commits
+
+git remote - v    # view repository address/remote URL for repository
+
+git remote show origin    # get more information about the remote repo
+
+git remote add origin URL    # if you created a local repo without "git clone", add the URL of the remote repo as a repo on GitHub in the configuration file
+
+git remote add new
+
+git rerere   # reuse recorded resolution (“reuse recorded resolutions”). 
+Example: 
+1) there is a hello.rb file, 
+2) someone created a branch named i18-world branch and wrote 'hello WORLD', 
+3) someone changed the file on the master branch and it wrote 'HELLO world', 
+4) on the master branch we do 'git merge i18n-world' (there is a merge conflict), 
+5) We want to see the conflict: git status, git rerere status, git rerere diff
+
+git reset HEAD file_name   # to remove the file from the staging area (make file untracked)
+
+git reset file_name   # delete index and file from staging area
+
+git reset -hard file_name  # remove changes since the previous commit, this includes the index and the change to the HEAD
+
+git reset -soft HEAD^ file_name    # remove changes since the previous commit, but it leaves the command in the index/staging area; it makes changes to HEAD only
+
+git reset *   # remove all git command errors and start over
+
+git revert    # creates a commit that contains the inverse of  all the changes made in the bad commit in order to cancel them out
+
+git rm   # delete files from repository
+
+get rm -cached file_name   # remove file_name from staging area and don't save changes
+
+git show SHA_ID   # For each commit ID, it displays information about the commit and the path. Get the ID with 'git log -p'
+
+git status    # The status of our changes: list branches, list files that are in the staging area, tracked, and untracked
+
+git stash   # create an entry OR temporarily save the work you have done on a branch
+
+git stash pop    # put the stashed entry in current directory
+
+git stash drop   # delete most recent stash
+
+git tag version_name   # (ie : git tag v3.8.1) create a short tag (lightweight)
