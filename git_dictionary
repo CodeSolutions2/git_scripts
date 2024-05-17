@@ -39,3 +39,19 @@ git config --global remote.origin.url https://github.com/OwnerRepoName/RepoName.
 git config --global user.email "OwnerRepoEmail@gmail.com"
 git config --global user.name "OwnerRepoName"  # --global means we set different values for different repositories
 git config --global credential.helper cache  # use a credential helper that caches our credentials for a window of time
+
+# If one removes data from a file it may give an error, saying "You have divergent branches and need to specify how to reconcile them". Thus, one needs to tell Git to accept the changes either by: 0) combining the current and previous file contents into the new file (merge), 1) accepting the file that was changed last by chronological order (rebase), [2] selecting a combination of the latest changes on the main branch and the latest changes on your branch (fast-forward).
+git config --global pull.rebase false # merge (the default strategy)
+git config --global pull.rebase true  # rebase
+git config --global pull.ff only 
+
+# You can replace "git config" with "git config --global" to set a default preference for all repositories. You can also pass --rebase, --no-rebase, or --ff-only on the command line to override the configured default per invocation.
+
+git config --global --unset-all gui.recentrepo  # remove the git.recentrepo
+git config --global rerere.enabled true   # enable rerere functionality in configuration file
+
+git diff  # see the changes that were made in a repository, for all files
+git diff -u  # see the changes that were made in a repository, for all files
+git diff --staged  # look at the changes of all the files in the staging area
+git diff -cached file_name   # look at the changes for file_name in the staging area
+git diff file_name  # look at the changes between the current version of file_name and the last committed version of file_name
