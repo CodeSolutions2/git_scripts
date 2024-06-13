@@ -79,6 +79,8 @@ git pull origin $branch_name
 echo "View the branches AFTER the PULL"
 git branch
 
+git branch --set-upstream-to origin/main; 
+
 echo "Switch to the branch named $branch_name: AFTER the PULL"
 git checkout $branch_name
 
