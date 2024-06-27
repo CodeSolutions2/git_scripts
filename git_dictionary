@@ -26,6 +26,8 @@ git branch new-feature    # create a new branch it's called new-feature
 
 git branch -r       # see remote branches in the repo, you can't modify branches because it's read-only
 
+git branch -m main    # renames the current branch to 'main
+
 git branch -merged    # list branches that were merged into the current branch
 
 git checkout   # see branches
