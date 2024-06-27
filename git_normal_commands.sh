@@ -43,6 +43,8 @@ else
    export URL=$(echo "git@github.com:$RepoOwnerName/$RepoName.git")
 fi 
 git config --global remote.origin.url $URL
+# OR
+git remote set-url origin https://$GITHUB_TOKEN@github.com/$RepoOwnerName/$RepoName.git
 
 # Specify the directory where the .git folder is as "Safe"/Accessable
 git config --global --add safe.directory $git_dir_folder_path
