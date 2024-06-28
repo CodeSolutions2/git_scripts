@@ -10,6 +10,10 @@ export folder_path=$(echo "/home/username/Documents")
 export RepoOwnerName=$(echo "RepoOwnerName")
 
 # [3] Define the Repository Owner Email
+# To view your non-reply email address go to https://github.com/settings/emails.
+# RepoOwnerEmail="91731082+j622amilah@users.noreply.github.com";
+# OR
+# RepoOwnerEmail="j622amilah@gmail.com";
 export RepoOwnerEmail=$(echo "RepoOwnerEmail@gmail.com")
 
 # [4] Connection method: Define how one wants to connect to GitHub (SSH or HTTPS)
@@ -33,6 +37,9 @@ export git_dir_folder_path=$(echo "$folder_path_outside_git_dir/$RepoName")
 # [8] Set the git configuration file: the configuration file is located in the home directory for linux: /home/username/.gitconfig.
 git config --global user.name $RepoOwnerName
 git config --global user.email $RepoOwnerEmail
+
+# Reset the author information on your last commit. When you push (git push) the commit with the noreply e-mail address, future commits will have the [noreply OR normal] e-mail address.
+git commit --amend --reset-author
 
 # Specify the remote repository: if the URL is set in the configuration file one does not need to add a remote repository [git remote add origin $URL] after running [git init]
 if [[ $connection_method == "HTTPS" ]]; then
