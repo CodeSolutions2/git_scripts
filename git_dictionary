@@ -34,6 +34,8 @@ git checkout   # see branches
 
 git checkout file_name.ext  # remove real changes in file_name.ext up to the previous commit OR discard 'unstaged' changes in modified files
 
+git checkout update_pub_priv_keys -- .github/workflows/update_public_private_keys_automatically.yaml  # associate a file with a specific branch
+
 git checkout branch_name   	# change the branch to the branch named branch_name
 
 git checkout -b new_branch_name   # create a new branch from the current branch, and change to the new branch called new_branch_name
