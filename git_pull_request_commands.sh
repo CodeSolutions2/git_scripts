@@ -35,7 +35,7 @@ git add .
 git commit -m "Updating repository"
 
 # [8] Push your branch to your forked repository on GitHub.
-git push --set-upstream origin codesolutions2_tfjs_contribute
+git push --set-upstream origin newBranch
 
 # [9] Finished with codespace. Delete the codespace.
 gh codespace delete --all
