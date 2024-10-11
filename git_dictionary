@@ -151,6 +151,8 @@ Example:
 4) on the master branch we do 'git merge i18n-world' (there is a merge conflict), 
 5) We want to see the conflict: git status, git rerere status, git rerere diff
 
+git reset   # remove unstaged changes
+
 git reset HEAD file_name   # to remove the file from the staging area (make file untracked)
 
 git reset file_name   # delete index and file from staging area
